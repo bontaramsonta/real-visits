@@ -10,10 +10,7 @@ import "./index.css";
 export function Point(props: { position: [number, number, number] }) {
   const [active, setActive] = useState(false);
   return (
-    <mesh
-      // userData={{ blocking: false }}
-      position={props.position}
-    >
+    <mesh position={props.position}>
       <Html>
         <div
           onClick={() => {
@@ -65,12 +62,8 @@ export function Sphere(props: ThreeElements["mesh"]) {
       {...props}
       ref={ref}
       scale={12}
-      // onPointerOver={(e) => {
-      //   console.debug("sphere over", e);
-      // }}
       onDoubleClick={(e) => {
         console.debug("hit", e);
-        // add a point on the surface of the sphere
         setPoints((points) => [
           ...points,
           new THREE.Vector3().copy(e.point).normalize(),
@@ -86,6 +79,7 @@ export function Sphere(props: ThreeElements["mesh"]) {
   );
 }
 export function MyCanvas() {
+  const [autoRotate] = useState(true);
   return (
     <Canvas
       raycaster={{
@@ -95,23 +89,21 @@ export function MyCanvas() {
         },
       }}
       resize={{ scroll: false }}
-      camera={
-        {
-          // position: [0, 0, -1],
-        }
-      }
+      camera={{
+        rotation: new THREE.Euler(0, 0, 0),
+      }}
     >
       <ambientLight intensity={Math.PI / 1} />
-      {/* <spotLight
-        position={[10, 10, 10]}
-        angle={0.15}
-        penumbra={1}
-        decay={0}
-        intensity={Math.PI}
-      /> */}
-      {/* <pointLight position={[5, 10, -10]} decay={0} intensity={10} /> */}
       <Sphere />
-      <OrbitControls makeDefault />
+      <OrbitControls
+        autoRotate={autoRotate}
+        autoRotateSpeed={0.25}
+        enablePan={false}
+        minDistance={1}
+        maxDistance={10}
+        zoomSpeed={2}
+        rotateSpeed={-1}
+      />
     </Canvas>
   );
 }
