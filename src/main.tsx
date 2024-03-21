@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { createRoot } from "react-dom/client";
-import { useState, useRef } from "react";
+import { useState, useRef, Suspense } from "react";
 import { Canvas, ThreeElements, useLoader } from "@react-three/fiber";
 import photoSphereImg from "./assets/photo-sphere.jpg";
 import { Html, OrbitControls } from "@react-three/drei";
@@ -78,33 +78,53 @@ export function Sphere(props: ThreeElements["mesh"]) {
     </mesh>
   );
 }
+
+export function Loader() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        backgroundColor: "black",
+      }}
+    >
+      loading...
+    </div>
+  );
+}
+
 export function MyCanvas() {
   const [autoRotate] = useState(true);
   return (
-    <Canvas
-      raycaster={{
-        intersectObjects: (raycaster, objects) => {
-          console.debug("raycaster", raycaster, objects);
-          return [];
-        },
-      }}
-      resize={{ scroll: false }}
-      camera={{
-        rotation: new THREE.Euler(0, 0, 0),
-      }}
-    >
-      <ambientLight intensity={Math.PI / 1} />
-      <Sphere />
-      <OrbitControls
-        autoRotate={autoRotate}
-        autoRotateSpeed={0.25}
-        enablePan={false}
-        minDistance={1}
-        maxDistance={10}
-        zoomSpeed={2}
-        rotateSpeed={-1}
-      />
-    </Canvas>
+    <Suspense fallback={<Loader />}>
+      <Canvas
+        raycaster={{
+          intersectObjects: (raycaster, objects) => {
+            console.debug("raycaster", raycaster, objects);
+            return [];
+          },
+        }}
+        resize={{ scroll: false }}
+        camera={{
+          rotation: new THREE.Euler(0, 0, 0),
+        }}
+      >
+        <ambientLight intensity={Math.PI / 1} />
+        <Sphere />
+        <OrbitControls
+          autoRotate={autoRotate}
+          autoRotateSpeed={0.25}
+          enablePan={false}
+          minDistance={1}
+          maxDistance={10}
+          zoomSpeed={2}
+          rotateSpeed={-1}
+        />
+      </Canvas>
+    </Suspense>
   );
 }
 
